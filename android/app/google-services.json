@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "889327520077",
+    "project_id": "snpcompany-a1d73",
+    "storage_bucket": "snpcompany-a1d73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889327520077:android:9d1e932a8e9283a4c08f04",
+        "android_client_info": {
+          "package_name": "com.dbestech.snpfoodshop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889327520077-k6u58kt9aqbof1r3aqhfv1eumhpj8dtt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH6Z2lcoywPQSAvonahkyD-2NTyAZjcow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889327520077-k6u58kt9aqbof1r3aqhfv1eumhpj8dtt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889327520077:android:668b62dd5e2a1795c08f04",
+        "android_client_info": {
+          "package_name": "com.example.snp_booking_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889327520077-k6u58kt9aqbof1r3aqhfv1eumhpj8dtt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH6Z2lcoywPQSAvonahkyD-2NTyAZjcow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889327520077-k6u58kt9aqbof1r3aqhfv1eumhpj8dtt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
