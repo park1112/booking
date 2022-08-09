@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:snp_booking_app/screens/chat_screen.dart';
 import 'package:snp_booking_app/screens/main_screen.dart';
 import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 void main() async{
@@ -23,7 +25,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue
       ),
-      home: const LoginSignupScreen(),
+      home: StreamBuilder(  //로그아웃시 회원정보 없애준다
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot){
+          if(snapshot.hasData){
+            return ChatScreen();
+          }
+          return LoginSignupScreen();
+        },
+      )
     );
   }
 }

@@ -446,12 +446,20 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           final newUser = await _authentication
                               .createUserWithEmailAndPassword(
                               email: userEmail, password: userPassWord);
+                          // 파이어베이스 회원가입시 users 컬랙션에 회원정보 저장하기
+                          FirebaseFirestore.instance.collection('users').doc(newUser.user!.uid).set(
+                            {
+                              'userName' : userName,
+                              'email' : userEmail,
+                              'userUid' : newUser.user!.uid
+                            }
+                          );
                           if (newUser.user != null) {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return ChatScreen(); //채팅방으로 이동하게 만든다 .
-                                }),
-                            );
+                            // Navigator.push(context, MaterialPageRoute(
+                            //     builder: (context) {
+                            //       return ChatScreen(); //채팅방으로 이동하게 만든다 .
+                            //     }),
+                            // );
                             setState(() {
                               showSpinner = false;
                             });
