@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:snp_booking_app/add_image/add_image.dart';
 import 'package:snp_booking_app/config/palette.dart';
-import 'package:firebase_auth/firebase_auth.dart';  //파이어베이스 회원가입 로그인
+import 'package:firebase_auth/firebase_auth.dart'; //파이어베이스 회원가입 로그인
 import 'package:snp_booking_app/screens/chat_screen.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart'; //로그인 로딩창 생성 코딩쉐프 매운맛 25강 23분
-import 'package:cloud_firestore/cloud_firestore.dart';  //회원정보 저장기능!!
+import 'package:cloud_firestore/cloud_firestore.dart'; //회원정보 저장기능!!
+// import '파이어베이스스토리지 임포트해야됨!';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
@@ -21,6 +26,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userEmail = '';
   String userPassWord = '';
 
+  //여기 add_image에서 받아온것을 저장한다 !
+  File? userPickedImage;
+
+  void pickedImage(File image) {
+    userPickedImage = image;
+  }
+
   void _tryValidation() {
     final isValid = _formKey.currentState!.validate();
     if (isValid) {
@@ -28,12 +40,25 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     }
   }
 
+  //이미지 다이얼로그 생성!!
+  void showAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+            backgroundColor: Colors.white,
+            child: AddImage(pickedImage)
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Palette.backgroundColor,
       body: ModalProgressHUD(
-        inAsyncCall: showSpinner,   //로그인시 로딩창 생성
+        inAsyncCall: showSpinner, //로그인시 로딩창 생성
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -159,19 +184,39 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               },
                               child: Column(
                                 children: [
-                                  Text(
-                                    '가입하기',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: isSignupScreen
-                                          ? Palette.activeColor
-                                          : Palette.textColor1,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '가입하기',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: isSignupScreen
+                                              ? Palette.activeColor
+                                              : Palette.textColor1,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      //이미지 추가 버튼 생성
+                                      if(isSignupScreen)
+                                        GestureDetector(
+                                          onTap: () {
+                                            showAlert(context);
+                                          },
+                                          child: Icon(
+                                            Icons.image,
+                                            color: isSignupScreen
+                                                ? Colors.cyan
+                                                : Colors.grey[300],
+                                          ),
+                                        )
+                                    ],
                                   ),
                                   if (isSignupScreen)
                                     Container(
-                                      margin: EdgeInsets.only(top: 3),
+                                      margin: EdgeInsets.fromLTRB(0, 3, 35, 0),
                                       height: 2,
                                       width: 55,
                                       color: Colors.orange,
@@ -441,19 +486,43 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       });
                       //전송버튼 누르면 실행됨!
                       if (isSignupScreen) {
+                        if (userPickedImage == null) {
+                          setState(() {
+                            showSpinner = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('이미지를 선택하여 주세요.'),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                          return;
+                        }
                         _tryValidation();
                         try {
                           final newUser = await _authentication
                               .createUserWithEmailAndPassword(
                               email: userEmail, password: userPassWord);
                           // 파이어베이스 회원가입시 users 컬랙션에 회원정보 저장하기
-                          FirebaseFirestore.instance.collection('users').doc(newUser.user!.uid).set(
-                            {
-                              'userName' : userName,
-                              'email' : userEmail,
-                              'userUid' : newUser.user!.uid
-                            }
-                          );
+
+                          //여기는 이미지 추가하기
+                          final refImage = FirebaseStorage.instance.ref()
+                              .child('picked_image')
+                              .child(newUser.user!.uid + 'png');
+
+                          await refImage.putFile(userPickedImage!);
+                          //url정보 변환하기 !
+                          final url = await refImage.getDownloadURL();
+
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(newUser.user!.uid)
+                              .set({
+                            'userName': userName,
+                            'email': userEmail,
+                            'userUid': newUser.user!.uid,
+                            'picked_image' : url ,
+                          });
                           if (newUser.user != null) {
                             // Navigator.push(context, MaterialPageRoute(
                             //     builder: (context) {
@@ -466,31 +535,37 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           }
                         } catch (e) {
                           print(e);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('이메일 또는 비밀번호를 확인해주세요.'),
-                              backgroundColor: Colors.blue,
-                            ),
-                          );
-                        }
-                      }
-                      if (!isSignupScreen) {
-                        _tryValidation();
-                        try {
-                          final newUser = await _authentication
-                              .signInWithEmailAndPassword(
-                              email: userEmail, password: userPassWord);
-                          if (newUser.user != null) {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return ChatScreen(); //채팅방으로 이동하게 만든다 .
-                                }),
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('이메일 또는 비밀번호를 확인해주세요.'),
+                                backgroundColor: Colors.blue,
+                              ),
                             );
                             setState(() {
                               showSpinner = false;
                             });
                           }
-                        }catch(e){
+                        }
+                      }
+                      if (!isSignupScreen) {
+                        _tryValidation();
+                        try {
+                          final newUser =
+                          await _authentication.signInWithEmailAndPassword(
+                              email: userEmail, password: userPassWord);
+                          if (newUser.user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return ChatScreen(); //채팅방으로 이동하게 만든다 .
+                              }),
+                            );
+                            setState(() {
+                              showSpinner = false;
+                            });
+                          }
+                        } catch (e) {
                           print(e);
                         }
                       }
