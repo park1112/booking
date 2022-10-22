@@ -178,7 +178,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     Row(
                       children: [
                         Container(
-                          width: 250,
+                          width: MediaQuery.of(context).size.width - 180,
                           child: TextField(
                             decoration: InputDecoration(
                                 hintText: '요청사항이 있으면 적어주세요.',
@@ -262,7 +262,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   children: [
                     Container(
                         child: RadioList(data: '선불카드 - 잔액 0원'),
-                    width: 300,),
+                    width: MediaQuery.of(context).size.width - 180,),
                     Container(
                       child: Text('카드 충전', style: TextStyle(fontSize: 10, color:primary ),),
                       padding: EdgeInsets.only(left: 8,top: 4,bottom: 4, right: 8),

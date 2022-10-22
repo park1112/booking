@@ -35,6 +35,10 @@ const List<String> imgList = [
 ];
 
 class _HomeScreenState extends State<HomeScreen> {
+  CollectionReference product = FirebaseFirestore.instance.collection('mainItem');
+
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -448,21 +452,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget RecommendedMenu() {
     return
-    StreamBuilder<List<MainModel>>(
-        stream: streamMain(),
-        builder: (context, asyncSnapshot) {
-          if (!asyncSnapshot.hasData) {
+    // StreamBuilder<List<MainModel>>(
+      StreamBuilder(
+        stream: product.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+          if (!streamSnapshot.hasData) {
             //데이터가 없을 경우 로딩위젯을 표시한다.
             return const Center(child: CircularProgressIndicator());
-          } else if (asyncSnapshot.hasError) {
+          } else if (streamSnapshot.hasError) {
             return const Center(
               child: Text('오류가 발생했습니다.'),
             );
           } else {
-            List<MainModel> mainList =
-                asyncSnapshot.data!; //비동기 데이터가 존재할 경우 리스트뷰 표시
-            print('mainList');
-            print(mainList);
             return Padding(
               padding: EdgeInsets.all(12),
               child: Column(children: [
@@ -504,18 +505,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               runSpacing: 10,
                               // 좌우(상하) 공간
                               children: List.generate(
-                                mainMenu.length,
+                                streamSnapshot.data!.docs.length,
                                 (index) => Container(
                                   margin: const EdgeInsets.only(right: 15),
                                   child: MainMenuItem(
-                                    data: mainMenu[index],
+                                    data: streamSnapshot.data!.docs[index],
                                     isSelected: index == 0,
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => ItemDetail(
-                                            data: mainMenu[index],
+                                            data: streamSnapshot.data!.docs[index].toString(),
                                             // data: populars[index],
                                           ),
                                         ),
@@ -532,6 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ]),
             );
+
           }
         });
   }

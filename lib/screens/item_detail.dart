@@ -17,6 +17,7 @@ class ItemDetail extends StatefulWidget {
 }
 
 class _ItemDetailState extends State<ItemDetail> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +53,19 @@ class _ItemDetailState extends State<ItemDetail> {
   }
 
   getBody() {
+    // 여기서 안됨! !!!!!!
+    print('widget.data["option"]');
+    var option = widget.data["option"];
+    var size = widget.data["size"];
+    print(widget.data["name"]);
+    print(option.toString());
+
+    // List<String> option = widget.data["option"];
+    // List<String> size = widget.data["size"];
+    // List<dynamic> option = widget.data["option"];
+    // List<dynamic> size = widget.data["size"];
+    // Map<String?,dynamic> option = widget.data["option"];
+    // Map<String?,dynamic> size = widget.data["size"];
     return SingleChildScrollView(
 
         child: Column(
@@ -88,12 +102,12 @@ class _ItemDetailState extends State<ItemDetail> {
                       ),
                       ShowBtn(
                           data: '크기 옵션을 선택해 주세요.',
-                          option: widget.data["option"]),
+                          option: option),
                       SizedBox(
                         height: 20,
                       ),
                       ShowBtn(
-                          data: '무게 옵션을 선택해 주세요.', option: widget.data["size"]),
+                          data: '무게 옵션을 선택해 주세요.', option: size),
                       SizedBox(
                         height: 20,
                       ),
