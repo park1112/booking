@@ -73,7 +73,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   height: 300,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage('images/1.jpg'), fit: BoxFit.fill),
+                        image: AssetImage('images/2.jpg'), fit: BoxFit.fill),
                   ),
                   child: Container(
                     padding: EdgeInsets.only(top: 30, left: 20),
@@ -82,14 +82,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       children: [
                         RichText(
                           text: TextSpan(
-                              text: isSignupScreen ? '반가워요!!' : '로그인해주세요!',
+                              text: 'SNP PLUS 입니다.' ,
                               style: TextStyle(
                                   letterSpacing: 1.0,
                                   fontSize: 25,
                                   color: Colors.black),
                               children: [
                                 TextSpan(
-                                  text: '여기는 채팅방입니다.',
+                                  text: isSignupScreen ? '환영합니다.' : '로그인',
                                   style: TextStyle(
                                       letterSpacing: 1.0,
                                       fontSize: 25,
@@ -102,7 +102,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           height: 5.0,
                         ),
                         Text(
-                          'Singup to continue',
+                          '에스엔피 쇼핑몰 입니다.',
                           style: TextStyle(
                             letterSpacing: 1.0,
                             color: Colors.black,
